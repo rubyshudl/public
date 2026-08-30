@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="可在线编辑、支持 Google Maps 导航和 Apple Calendar 导出的美国旅行计划。">
+  <title>美国旅行计划 · Trip Canvas</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <a class="brand" href="#" aria-label="Trip Canvas 首页">
+        <span class="brand-pin" aria-hidden="true"><i></i></span>
+        <span class="latin">Trip Canvas</span>
+      </a>
+
+      <div class="header-actions">
+        <span class="save-status" id="saveStatus"><i></i>已保存到本机</span>
+        <button class="text-button" id="backupButton" type="button">备份</button>
+        <button class="text-button" id="restoreButton" type="button">导入</button>
+        <button class="primary-button" id="calendarButton" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg>
+          导出日历
+        </button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="sidebar" aria-label="旅行日期">
+        <div class="trip-summary">
+          <p class="overline latin">MY JOURNEY</p>
+          <button class="trip-title-button" id="editTripButton" type="button" title="编辑旅行信息">
+            <span id="tripTitle">美国东西海岸</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5.5 4 4M4 20l3.6-.7L19 7.9a1.4 1.4 0 0 0 0-2l-.9-.9a1.4 1.4 0 0 0-2 0L4.7 16.4 4 20Z"/></svg>
+          </button>
+          <p id="tripDateRange" class="trip-date-range"></p>
+        </div>
+
+        <nav class="day-nav" id="dayNav"></nav>
+
+        <button class="add-day-button" id="addDayButton" type="button">
+          <span>＋</span> 添加一天
+        </button>
+
+        <div class="sidebar-tip">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Zm0-14v5m0 3v.2"/></svg>
+          <p>修改会自动保存在当前浏览器。跨设备使用前，请先导出备份。</p>
+        </div>
+      </aside>
+
+      <section class="day-workspace" aria-live="polite">
+        <div class="day-hero">
+          <div>
+            <p class="day-kicker" id="dayKicker"></p>
+            <div class="day-title-row">
+              <h1 id="dayTitle"></h1>
+              <button class="icon-button edit-day-button" id="editDayButton" type="button" aria-label="编辑当天信息" title="编辑当天信息">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14.5 5.5 4 4M4 20l3.6-.7L19 7.9a1.4 1.4 0 0 0 0-2l-.9-.9a1.4 1.4 0 0 0-2 0L4.7 16.4 4 20Z"/></svg>
+              </button>
+            </div>
+            <p class="day-subtitle" id="daySubtitle"></p>
+          </div>
+          <div class="day-actions">
+            <button class="secondary-button" id="dayRouteButton" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18H6a3 3 0 0 1 0-6h12a3 3 0 0 0 0-6h-3M8 9l-3 3 3 3m8-12 3 3-3 3"/></svg>
+              当日路线
+            </button>
+            <button class="primary-button" id="addItemButton" type="button"><span>＋</span> 添加安排</button>
+          </div>
+        </div>
+
+        <div class="quick-filters" id="quickFilters" aria-label="筛选行程项目">
+          <button class="filter-chip active" type="button" data-filter="all" aria-pressed="true">全部</button>
+          <button class="filter-chip" type="button" data-filter="transport" aria-pressed="false"><i class="dot transport"></i>交通</button>
+          <button class="filter-chip" type="button" data-filter="stay" aria-pressed="false"><i class="dot stay"></i>住宿</button>
+          <button class="filter-chip" type="button" data-filter="activity" aria-pressed="false"><i class="dot activity"></i>玩乐</button>
+          <button class="filter-chip" type="button" data-filter="food" aria-pressed="false"><i class="dot food"></i>餐饮</button>
+          <button class="filter-chip" type="button" data-filter="note" aria-pressed="false"><i class="dot note"></i>备注</button>
+        </div>
+
+        <div class="timeline" id="timeline"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="modal" id="itemDialog">
+    <form id="itemForm" method="dialog">
+      <div class="modal-header">
+        <div>
+          <p class="overline latin" id="itemDialogOverline">NEW PLAN</p>
+          <h2 id="itemDialogTitle">添加安排</h2>
+        </div>
+        <button class="close-button" data-close="itemDialog" type="button" aria-label="关闭">×</button>
+      </div>
+
+      <input id="itemId" type="hidden">
+      <fieldset class="type-picker">
+        <legend>类别</legend>
+        <label><input type="radio" name="itemType" value="transport"><span><i class="dot transport"></i>交通</span></label>
+        <label><input type="radio" name="itemType" value="stay"><span><i class="dot stay"></i>住宿</span></label>
+        <label><input type="radio" name="itemType" value="activity" checked><span><i class="dot activity"></i>玩乐</span></label>
+        <label><input type="radio" name="itemType" value="food"><span><i class="dot food"></i>餐饮</span></label>
+        <label><input type="radio" name="itemType" value="note"><span><i class="dot note"></i>备注</span></label>
+      </fieldset>
+
+      <label class="field full">
+        <span>标题 <b>*</b></span>
+        <input id="itemTitle" type="text" maxlength="100" required placeholder="例如：中央公园散步">
+      </label>
+
+      <div class="form-grid">
+        <label class="field">
+          <span>开始时间</span>
+          <input id="startTime" type="time">
+        </label>
+        <label class="field">
+          <span>结束时间</span>
+          <input id="endTime" type="time">
+        </label>
+      </div>
+
+      <div id="singleLocationFields">
+        <label class="field full">
+          <span>地点</span>
+          <div class="input-with-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <input id="location" type="text" maxlength="180" placeholder="输入酒店、景点或地址">
+          </div>
+          <small>保存后可直接在 Google Maps 查看或导航</small>
+        </label>
+      </div>
+
+      <div id="routeFields" hidden>
+        <label class="field full">
+          <span>出发地</span>
+          <div class="input-with-icon"><i class="route-origin"></i><input id="origin" type="text" maxlength="180" placeholder="输入出发地点"></div>
+        </label>
+        <label class="field full">
+          <span>目的地</span>
+          <div class="input-with-icon"><i class="route-destination"></i><input id="destination" type="text" maxlength="180" placeholder="输入目的地"></div>
+        </label>
+        <label class="field full compact-field">
+          <span>导航方式</span>
+          <select id="travelMode">
+            <option value="driving">驾车</option>
+            <option value="transit">公共交通</option>
+            <option value="walking">步行</option>
+            <option value="bicycling">骑行</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="field full">
+        <span>备注</span>
+        <textarea id="notes" rows="3" maxlength="600" placeholder="航班号、确认号、预约信息或想法……"></textarea>
+      </label>
+
+      <div class="modal-actions">
+        <button class="danger-button" id="deleteItemButton" type="button" hidden>删除</button>
+        <span></span>
+        <button class="secondary-button" data-close="itemDialog" type="button">取消</button>
+        <button class="primary-button" type="submit">保存安排</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal small-modal" id="dayDialog">
+    <form id="dayForm" method="dialog">
+      <div class="modal-header">
+        <div><p class="overline latin">EDIT DAY</p><h2 id="dayDialogTitle">编辑当天信息</h2></div>
+        <button class="close-button" data-close="dayDialog" type="button" aria-label="关闭">×</button>
+      </div>
+      <input id="dayId" type="hidden">
+      <label class="field full"><span>日期 <b>*</b></span><input id="dayDate" type="date" required></label>
+      <label class="field full"><span>城市 / 路线 <b>*</b></span><input id="dayCity" type="text" maxlength="80" required placeholder="例如：纽约 或 纽约 → 洛杉矶"></label>
+      <label class="field full compact-field"><span>当天时区 <b>*</b></span><select id="dayTimezone" required><option value="America/New_York">纽约时间（美国东部）</option><option value="America/Los_Angeles">洛杉矶时间（美国西部）</option><option value="Asia/Shanghai">北京时间</option></select></label>
+      <label class="field full"><span>当天提示</span><input id="daySummary" type="text" maxlength="160" placeholder="例如：抵达日，轻松安排"></label>
+      <div class="modal-actions">
+        <button class="danger-button" id="deleteDayButton" type="button" hidden>删除当天</button>
+        <span></span>
+        <button class="secondary-button" data-close="dayDialog" type="button">取消</button>
+        <button class="primary-button" type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal small-modal" id="tripDialog">
+    <form id="tripForm" method="dialog">
+      <div class="modal-header">
+        <div><p class="overline latin">EDIT JOURNEY</p><h2>编辑旅行信息</h2></div>
+        <button class="close-button" data-close="tripDialog" type="button" aria-label="关闭">×</button>
+      </div>
+      <label class="field full"><span>旅行名称 <b>*</b></span><input id="tripNameInput" type="text" maxlength="80" required></label>
+      <label class="field full"><span>旅行副标题</span><input id="tripSubtitleInput" type="text" maxlength="120"></label>
+      <div class="modal-actions"><span></span><span></span><button class="secondary-button" data-close="tripDialog" type="button">取消</button><button class="primary-button" type="submit">保存</button></div>
+    </form>
+  </dialog>
+
+  <input id="restoreInput" type="file" accept="application/json,.json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
