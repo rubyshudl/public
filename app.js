@@ -41,6 +41,7 @@
   let activeFilter = "all";
   let toastTimer;
   let saveTimer;
+  let pendingAiProposal = null;
 
   const $ = (id) => document.getElementById(id);
   const dayNav = $("dayNav");
@@ -447,6 +448,136 @@
     toastTimer = setTimeout(() => toast.classList.remove("show"), 3000);
   }
 
+  function getAiSettings() {
+    return { endpoint: localStorage.getItem("trip-canvas-ai-endpoint") || "", accessCode: sessionStorage.getItem("trip-canvas-ai-access") || "" };
+  }
+
+  function setAiConnectionStatus() {
+    const settings = getAiSettings();
+    $("aiConnectionStatus").textContent = settings.endpoint && settings.accessCode ? "已连接 · 修改前需确认" : "安全连接未配置";
+  }
+
+  function openAiPanel() {
+    $("aiBackdrop").hidden = false;
+    $("aiPanel").classList.add("open");
+    $("aiPanel").setAttribute("aria-hidden", "false");
+    setAiConnectionStatus();
+    if (!getAiSettings().endpoint) openAiSetup();
+    setTimeout(() => $("aiInput").focus(), 220);
+  }
+
+  function closeAiPanel() {
+    $("aiPanel").classList.remove("open");
+    $("aiPanel").setAttribute("aria-hidden", "true");
+    $("aiBackdrop").hidden = true;
+    $("aiSetup").hidden = true;
+  }
+
+  function openAiSetup() {
+    const settings = getAiSettings();
+    $("aiEndpointInput").value = settings.endpoint;
+    $("aiAccessCodeInput").value = settings.accessCode;
+    $("aiSetup").hidden = false;
+  }
+
+  function saveAiSetup() {
+    const endpoint = $("aiEndpointInput").value.trim().replace(/\/$/, "");
+    const accessCode = $("aiAccessCodeInput").value;
+    if (!/^https:\/\//.test(endpoint)) { showToast("AI服务地址必须使用 https://"); return; }
+    if (!accessCode) { showToast("请填写私人访问码"); return; }
+    localStorage.setItem("trip-canvas-ai-endpoint", endpoint);
+    sessionStorage.setItem("trip-canvas-ai-access", accessCode);
+    $("aiSetup").hidden = true;
+    setAiConnectionStatus();
+    showToast("AI连接信息已保存");
+  }
+
+  function addAiMessage(role, text, extraHtml = "") {
+    const wrapper = document.createElement("div");
+    wrapper.className = `ai-message ${role}`;
+    wrapper.innerHTML = `<div class="message-bubble">${escapeHtml(text)}${extraHtml}</div>`;
+    $("aiMessages").appendChild(wrapper);
+    $("aiMessages").scrollTop = $("aiMessages").scrollHeight;
+    return wrapper;
+  }
+
+  function addAiLoading() {
+    const wrapper = document.createElement("div");
+    wrapper.className = "ai-message assistant";
+    wrapper.innerHTML = '<div class="message-bubble loading"><i></i><i></i><i></i></div>';
+    $("aiMessages").appendChild(wrapper);
+    $("aiMessages").scrollTop = $("aiMessages").scrollHeight;
+    return wrapper;
+  }
+
+  function validAiState(candidate) {
+    return candidate && typeof candidate.title === "string" && Array.isArray(candidate.days) && candidate.days.length > 0 && candidate.days.every((day) => day && typeof day.id === "string" && /^\d{4}-\d{2}-\d{2}$/.test(day.date) && typeof day.city === "string" && Array.isArray(day.items) && day.items.every((item) => item && typeof item.id === "string" && Object.hasOwn(typeLabels, item.type) && typeof item.title === "string"));
+  }
+
+  function summarizeProposal(before, after) {
+    const beforeItems = before.days.reduce((sum, day) => sum + day.items.length, 0);
+    const afterItems = after.days.reduce((sum, day) => sum + day.items.length, 0);
+    const parts = [];
+    if (after.days.length !== before.days.length) parts.push(`旅行天数 ${before.days.length} → ${after.days.length}`);
+    if (afterItems !== beforeItems) parts.push(`安排数量 ${beforeItems} → ${afterItems}`);
+    if (after.title !== before.title) parts.push(`旅行名称改为“${after.title}”`);
+    return parts.length ? parts.join("；") : "调整了行程内容、时间、地点或顺序";
+  }
+
+  function proposalMarkup(summary) {
+    return `<div class="ai-proposal"><strong>待确认的行程修改</strong><p>${escapeHtml(summary)}</p><div class="ai-proposal-actions"><button class="apply-ai-button" type="button">应用修改</button><button class="reject-ai-button" type="button">暂不修改</button></div></div>`;
+  }
+
+  async function sendAiMessage(event) {
+    event.preventDefault();
+    const message = $("aiInput").value.trim();
+    if (!message) return;
+    const settings = getAiSettings();
+    if (!settings.endpoint || !settings.accessCode) { openAiSetup(); showToast("请先连接私人AI服务"); return; }
+    addAiMessage("user", message);
+    $("aiInput").value = "";
+    $("aiSendButton").disabled = true;
+    const loading = addAiLoading();
+    try {
+      const response = await fetch(settings.endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Trip-Access": settings.accessCode },
+        body: JSON.stringify({ message, selectedDayId: state.selectedDayId, trip: state })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || `AI服务返回 ${response.status}`);
+      loading.remove();
+      if (payload.proposal && validAiState(payload.proposal) && JSON.stringify(payload.proposal) !== JSON.stringify(state)) {
+        pendingAiProposal = payload.proposal;
+        addAiMessage("assistant", payload.reply || "已整理好修改建议。", proposalMarkup(summarizeProposal(state, payload.proposal)));
+      } else {
+        pendingAiProposal = null;
+        addAiMessage("assistant", payload.reply || "这次没有需要写入行程的修改。");
+      }
+    } catch (error) {
+      loading.remove();
+      addAiMessage("assistant", `暂时无法完成：${error.message}`);
+    } finally { $("aiSendButton").disabled = false; $("aiInput").focus(); }
+  }
+
+  function applyAiProposal() {
+    if (!validAiState(pendingAiProposal)) return;
+    const previousSelected = state.selectedDayId;
+    state = pendingAiProposal;
+    state.selectedDayId = state.days.some((day) => day.id === previousSelected) ? previousSelected : state.days[0].id;
+    pendingAiProposal = null;
+    persist("AI建议已应用到行程");
+    render();
+    addAiMessage("assistant", "修改已应用。需要撤销时，可导入此前的JSON备份。");
+    document.querySelectorAll(".ai-proposal-actions").forEach((element) => element.remove());
+  }
+
+  function rejectAiProposal() {
+    pendingAiProposal = null;
+    document.querySelectorAll(".ai-proposal-actions").forEach((element) => element.remove());
+    addAiMessage("assistant", "已保留当前行程，没有写入修改。");
+  }
+
   dayNav.addEventListener("click", (event) => { const button = event.target.closest("[data-day]"); if (button) selectDay(button.dataset.day); });
   $("quickFilters").addEventListener("click", (event) => { const button = event.target.closest("[data-filter]"); if (!button) return; activeFilter = button.dataset.filter; updateFilterButtons(); renderDay(); });
   timeline.addEventListener("click", (event) => {
@@ -472,6 +603,16 @@
   $("restoreButton").addEventListener("click", () => $("restoreInput").click());
   $("restoreInput").addEventListener("change", (event) => { if (event.target.files[0]) restoreState(event.target.files[0]); });
   $("calendarButton").addEventListener("click", exportCalendar);
+  $("aiButton").addEventListener("click", openAiPanel);
+  $("closeAiButton").addEventListener("click", closeAiPanel);
+  $("aiBackdrop").addEventListener("click", closeAiPanel);
+  $("aiSettingsButton").addEventListener("click", openAiSetup);
+  $("cancelAiSetup").addEventListener("click", () => { $("aiSetup").hidden = true; });
+  $("saveAiSetup").addEventListener("click", saveAiSetup);
+  $("aiForm").addEventListener("submit", sendAiMessage);
+  $("aiSuggestions").addEventListener("click", (event) => { const button = event.target.closest("button"); if (!button) return; $("aiInput").value = button.textContent; $("aiInput").focus(); });
+  $("aiMessages").addEventListener("click", (event) => { if (event.target.closest(".apply-ai-button")) applyAiProposal(); if (event.target.closest(".reject-ai-button")) rejectAiProposal(); });
 
   render();
+  setAiConnectionStatus();
 })();

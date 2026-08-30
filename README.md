@@ -13,6 +13,7 @@
 - 导出 `.ics` 日历文件，可导入 Apple Calendar
 - 每天可设置时区，日历按纽约或加州当地时间生成
 - 桌面及手机响应式布局
+- AI对话式行程编辑：先生成修改建议，确认后才写入
 
 ## 数据说明
 
@@ -21,3 +22,7 @@
 Google Maps 功能使用官方 Maps URL，无需 API Key。下一阶段可在确定各城市路线后，继续补充景点、餐厅、预约与分日导航。
 
 网页通过 GitHub Pages 从 `main` 分支根目录发布。
+
+## AI服务
+
+GitHub Pages不能安全保存OpenAI API Key，因此AI功能使用独立的Cloudflare Worker代理。网页仅保存Worker地址，私人访问码只保留在当前标签页；OpenAI API Key只存放在Worker机密中。部署说明见 `worker/README.md`。

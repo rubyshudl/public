@@ -20,6 +20,10 @@
         <span class="save-status" id="saveStatus"><i></i>已保存到本机</span>
         <button class="text-button" id="backupButton" type="button">备份</button>
         <button class="text-button" id="restoreButton" type="button">导入</button>
+        <button class="ai-header-button" id="aiButton" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 1.5 5.1L18 9l-4.5 1.9L12 16l-1.5-5.1L6 9l4.5-1.9L12 2Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></svg>
+          AI 助手
+        </button>
         <button class="primary-button" id="calendarButton" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg>
           导出日历
@@ -199,6 +203,52 @@
   </dialog>
 
   <input id="restoreInput" type="file" accept="application/json,.json" hidden>
+
+  <div class="ai-backdrop" id="aiBackdrop" hidden></div>
+  <aside class="ai-panel" id="aiPanel" aria-label="AI 行程助手" aria-hidden="true">
+    <header class="ai-panel-header">
+      <div class="ai-avatar" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="m12 2 1.5 5.1L18 9l-4.5 1.9L12 16l-1.5-5.1L6 9l4.5-1.9L12 2Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></svg>
+      </div>
+      <div><strong>AI 行程助手</strong><span id="aiConnectionStatus">安全连接未配置</span></div>
+      <button class="ai-settings-button" id="aiSettingsButton" type="button" aria-label="AI连接设置" title="AI连接设置">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+      </button>
+      <button class="close-button" id="closeAiButton" type="button" aria-label="关闭AI助手">×</button>
+    </header>
+
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-message assistant">
+        <div class="message-bubble">可以直接告诉我想怎样调整行程，例如：“9月28日上午加入大都会博物馆，安排3小时，并放在中央公园之后。”<small>AI会先生成修改建议，确认后才会写入计划。</small></div>
+      </div>
+    </div>
+
+    <div class="ai-setup" id="aiSetup" hidden>
+      <div class="ai-setup-card">
+        <h2>连接私人AI服务</h2>
+        <p>这里只填写已部署的安全服务地址和私人访问码。不要在网页中填写OpenAI API Key。</p>
+        <label class="field full"><span>AI服务地址</span><input id="aiEndpointInput" type="url" placeholder="https://trip-planner-ai.example.workers.dev"></label>
+        <label class="field full"><span>私人访问码</span><input id="aiAccessCodeInput" type="password" autocomplete="off" placeholder="由服务端设置的访问码"></label>
+        <div class="ai-setup-actions"><button class="text-button" id="cancelAiSetup" type="button">取消</button><button class="primary-button" id="saveAiSetup" type="button">保存连接</button></div>
+      </div>
+    </div>
+
+    <div class="ai-composer">
+      <div class="ai-suggestions" id="aiSuggestions">
+        <button type="button">把今天的安排排得更顺路</button>
+        <button type="button">帮我加入一个午餐时段</button>
+        <button type="button">检查是否有时间冲突</button>
+      </div>
+      <form id="aiForm">
+        <textarea id="aiInput" rows="2" maxlength="1200" placeholder="告诉AI你想如何调整行程……"></textarea>
+        <button class="ai-send-button" id="aiSendButton" type="submit" aria-label="发送给AI">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 16-8-5 16-3-6-8-2Z"/><path d="m12 14 8-10"/></svg>
+        </button>
+      </form>
+      <p>发送时会将当前行程和本条消息传给AI。</p>
+    </div>
+  </aside>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="app.js"></script>
 </body>

@@ -1,0 +1,11 @@
+name = "trip-canvas-ai"
+main = "src/worker.js"
+compatibility_date = "2026-08-30"
+
+[vars]
+ALLOWED_ORIGINS = "https://rubyshudl.github.io"
+OPENAI_MODEL = "gpt-5.6-sol"
+
+# 部署前执行：
+# wrangler secret put OPENAI_API_KEY
+# wrangler secret put AI_ACCESS_CODE
