@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f8fc">
+  <meta name="description" content="Ruby 的公开项目索引，浏览并进入不同的在线子项目。">
+  <title>Ruby's Public Space</title>
+  <link rel="stylesheet" href="public-index.css">
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="site-brand" href="./" aria-label="返回项目索引首页">
+        <span class="brand-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span><strong>Ruby's</strong><small>PUBLIC SPACE</small></span>
+      </a>
+      <nav aria-label="外部链接">
+        <a href="https://github.com/rubyshudl/public" target="_blank" rel="noopener noreferrer">
+          GitHub
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="pageTitle">
+        <div class="hero-copy">
+          <p class="eyebrow">PROJECT DIRECTORY</p>
+          <h1 id="pageTitle">在这里，找到每一个<br><em>正在发生</em>的想法。</h1>
+          <p class="intro">这是 Ruby 的公开项目索引。每个子目录都是一个独立空间，可以直接进入使用、浏览或继续探索。</p>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <span class="orbit orbit-one"></span>
+          <span class="orbit orbit-two"></span>
+          <span class="art-tile tile-blue">R</span>
+          <span class="art-tile tile-red"></span>
+          <span class="art-tile tile-yellow"></span>
+          <span class="art-tile tile-green"></span>
+        </div>
+      </section>
+
+      <section class="directory" aria-labelledby="directoryTitle">
+        <div class="directory-heading">
+          <div>
+            <p class="eyebrow">EXPLORE</p>
+            <h2 id="directoryTitle">项目目录</h2>
+          </div>
+          <p id="projectCount" aria-live="polite"></p>
+        </div>
+
+        <div class="directory-tools">
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <span class="sr-only">搜索项目</span>
+            <input id="projectSearch" type="search" placeholder="搜索项目名称或功能……" autocomplete="off">
+          </label>
+          <div class="category-filters" id="categoryFilters" aria-label="项目分类"></div>
+        </div>
+
+        <div class="project-grid" id="projectGrid"></div>
+        <div class="empty-results" id="emptyResults" hidden>
+          <span aria-hidden="true">⌕</span>
+          <h3>没有找到匹配的项目</h3>
+          <p>换一个关键词，或查看全部分类。</p>
+          <button id="clearSearchButton" type="button">显示全部项目</button>
+        </div>
+      </section>
+
+      <section class="future-note">
+        <div class="future-icon" aria-hidden="true">＋</div>
+        <div><strong>这个空间会持续生长</strong><p>新的工具、文档和实验会以独立子目录加入，登记后出现在这份索引里。</p></div>
+      </section>
+    </main>
+
+    <footer>
+      <span>© <span id="currentYear"></span> Ruby Shu</span>
+      <span>Built for ideas worth sharing.</span>
+    </footer>
+  </div>
+
+  <script src="projects.js"></script>
+  <script src="public-index.js"></script>
+</body>
+</html>
