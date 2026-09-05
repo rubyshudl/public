@@ -23,7 +23,7 @@
 
 Google Maps 功能使用官方 Maps URL，无需 API Key。下一阶段可在确定各城市路线后，继续补充景点、餐厅、预约与分日导航。
 
-网页通过 GitHub Pages 从 `main` 分支发布，旅行计划位于 `/trip-canvas/` 子目录；仓库根地址会自动跳转到该页面。
+网页通过 GitHub Pages 从 `main` 分支发布，旅行计划仅位于 `/trip-canvas/` 子目录。仓库根目录不再提供旅游项目页面或自动跳转。
 
 ## AI服务
 
