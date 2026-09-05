@@ -2,6 +2,8 @@
 
 可在线编辑的旅行计划网页，当前内置 2026 年美国东西海岸行程。
 
+在线地址：<https://rubyshudl.github.io/public/trip-canvas/>
+
 ## 基础功能
 
 - 按日期切换、增加、修改和删除旅行日
@@ -21,7 +23,7 @@
 
 Google Maps 功能使用官方 Maps URL，无需 API Key。下一阶段可在确定各城市路线后，继续补充景点、餐厅、预约与分日导航。
 
-网页通过 GitHub Pages 从 `main` 分支根目录发布。
+网页通过 GitHub Pages 从 `main` 分支发布，旅行计划位于 `/trip-canvas/` 子目录；仓库根地址会自动跳转到该页面。
 
 ## AI服务
 
