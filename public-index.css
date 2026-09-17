@@ -68,12 +68,15 @@ main { padding: 0 clamp(22px, 5vw, 76px) 72px; }
 .card-link { position: absolute; z-index: 2; inset: 0; }
 .card-visual { position: relative; min-height: 250px; padding: 20px; background: #eaf1ff; overflow: hidden; }
 .color-blue .card-visual { background: linear-gradient(145deg,#dfeaff,#f0f5ff); }
+.color-green .card-visual { background: linear-gradient(145deg,#dcf3e5,#f2fbf5); }
 .card-visual::before { content: ""; position: absolute; width: 190px; height: 190px; right: -52px; bottom: -64px; border: 22px solid rgba(255,255,255,.62); border-radius: 50%; }
 .card-symbol { position: absolute; top: 72px; right: 23px; left: 23px; display: grid; place-items: center; }
 .card-symbol svg { width: 96px; fill: none; stroke: var(--blue); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 7px 10px rgba(38,103,255,.16)); }
+.color-green .card-symbol svg { stroke: var(--green); filter: drop-shadow(0 7px 10px rgba(53,166,111,.16)); }
 .project-status { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; color: #236947; background: rgba(255,255,255,.74); border: 1px solid rgba(53,166,111,.26); border-radius: 13px; font-size: 9px; font-weight: 700; backdrop-filter: blur(8px); }
 .project-status i { width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
 .visual-word { position: absolute; right: 14px; bottom: 13px; color: rgba(38,103,255,.13); font: 700 33px/1 "Comic Sans MS", cursive; transform: rotate(-3deg); }
+.color-green .visual-word { color: rgba(53,166,111,.14); }
 .card-content { min-width: 0; display: flex; flex-direction: column; padding: 23px; }
 .card-meta { display: flex; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 9px; }
 .card-meta > span { color: var(--blue); font-weight: 700; }

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f8fafd">
+  <meta name="description" content="商业分析、海外GTM与出海商业化的公开学习及实战知识库。">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Global Growth Lab · 商业分析与海外GTM知识库</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#content">跳到主要内容</a>
+  <button id="navScrim" class="nav-scrim" type="button" aria-label="关闭导航" hidden></button>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar" aria-label="知识库导航">
+      <a class="brand" href="#home" data-route="home" aria-label="Global Growth Lab首页">
+        <span class="brand-grid" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span><strong>Global Growth Lab</strong><small>LEARN · PRACTICE · DECIDE</small></span>
+      </a>
+      <p class="workspace-label">商业分析 · GTM · 海外增长</p>
+      <nav id="mainNav">
+        <a href="#home" data-route="home"><span aria-hidden="true">⌂</span>学习首页</a>
+        <a href="#learn" data-route="learn"><span aria-hidden="true">▤</span>知识轨道</a>
+        <a href="#practice" data-route="practice"><span aria-hidden="true">◇</span>实战题库</a>
+        <a href="#review" data-route="review"><span aria-hidden="true">↺</span>待复习</a>
+        <a href="#favorites" data-route="favorites"><span aria-hidden="true">☆</span>收藏夹</a>
+      </nav>
+      <div class="sidebar-track-list" aria-label="学习轨道快捷入口">
+        <p>LEARNING TRACKS</p>
+        <a href="#learn/analysis"><i class="blue"></i>商业分析</a>
+        <a href="#learn/gtm"><i class="red"></i>海外GTM</a>
+        <a href="#learn/globalization"><i class="green"></i>出海商业化</a>
+      </div>
+      <div class="sidebar-note">
+        <strong>公开知识，私人档案</strong>
+        <p>知识内容公开。个人进度只在密码解锁后，以加密形式保存在当前浏览器。</p>
+      </div>
+      <a class="back-public" href="../"><span aria-hidden="true">←</span> 返回公开项目首页</a>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="menuButton" class="icon-button menu-button" type="button" aria-label="打开导航" aria-expanded="false" aria-controls="sidebar">☰</button>
+          <label class="global-search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            <span class="sr-only">搜索知识点和题目</span>
+            <input id="globalSearch" type="search" placeholder="搜索知识点、框架或题目…" autocomplete="off">
+            <kbd>/</kbd>
+          </label>
+        </div>
+        <div class="topbar-actions">
+          <span id="saveStatus" class="save-status" hidden></span>
+          <button id="randomButton" class="button secondary" type="button"><span aria-hidden="true">⤨</span>随机抽题</button>
+          <button id="profileButton" class="button primary" type="button"><span class="lock-dot" aria-hidden="true"></span><span id="profileButtonText">个人档案</span></button>
+        </div>
+      </header>
+
+      <main id="content" tabindex="-1"></main>
+      <footer><span>Global Growth Lab · 公开学习框架</span><span>个人数据不上传本站 · 非认证课程或专业意见</span></footer>
+    </div>
+  </div>
+
+  <dialog id="profileDialog" class="modal profile-modal">
+    <form id="profileForm" method="dialog">
+      <button class="modal-close" type="button" data-close="profileDialog" aria-label="关闭">×</button>
+      <div id="profileAuth">
+        <span class="modal-icon" aria-hidden="true">◇</span>
+        <p class="overline">LOCAL ENCRYPTED PROFILE</p>
+        <h2 id="profileTitle">创建个人学习档案</h2>
+        <p id="profileCopy" class="modal-copy">设置一个密码，用于加密当前浏览器中的收藏、进度、错题和答题草稿。</p>
+        <label id="profileNameField" class="field"><span>档案名称（可选）</span><input id="profileName" type="text" maxlength="30" autocomplete="nickname" placeholder="例如：Ruby"></label>
+        <label class="field"><span>密码</span><input id="profilePassword" type="password" minlength="6" maxlength="128" autocomplete="current-password" required placeholder="至少6位"></label>
+        <p id="profileError" class="form-error" role="alert" hidden></p>
+        <button id="profileSubmit" class="button primary wide" type="submit">创建并解锁</button>
+        <p class="security-note">密码不会上传或写入代码。本站没有找回密码功能，请导出加密备份并妥善保管。</p>
+      </div>
+      <div id="profileManage" hidden>
+        <span class="modal-icon unlocked" aria-hidden="true">✓</span>
+        <p class="overline">PERSONAL ARCHIVE</p>
+        <h2 id="manageTitle">个人档案已解锁</h2>
+        <p class="modal-copy">收藏、完成状态、待复习题和草稿会自动加密保存到当前浏览器。</p>
+        <div id="profileStats" class="profile-stats"></div>
+        <div class="manage-actions">
+          <button id="exportProfile" class="button secondary" type="button">导出加密备份</button>
+          <button id="importProfile" class="button secondary" type="button">导入备份</button>
+          <button id="lockProfile" class="button secondary" type="button">锁定档案</button>
+          <button id="deleteProfile" class="button danger" type="button">删除本机档案</button>
+        </div>
+        <p class="security-note">“登录”只解锁此浏览器的加密档案，不是云端账号。跨设备请导出并导入加密备份。</p>
+      </div>
+    </form>
+  </dialog>
+
+  <input id="importInput" type="file" accept="application/json,.json" hidden>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <noscript><p class="noscript">此知识库需要JavaScript才能显示内容和使用加密档案。</p></noscript>
+</body>
+</html>

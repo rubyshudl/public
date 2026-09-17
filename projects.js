@@ -1,5 +1,18 @@
 window.PUBLIC_PROJECTS = [
   {
+    id: "global-growth-lab",
+    title: "Global Growth Lab",
+    chineseTitle: "商业分析与海外GTM知识库",
+    path: "./global-growth-lab/",
+    category: "学习工具",
+    status: "框架已上线",
+    color: "green",
+    symbol: "growth",
+    description: "融合知识学习、面试与笔试题、虚构商业实战场景，以及密码解锁的本地加密收藏与复习档案。",
+    features: ["知识轨道", "实战题库", "加密档案"],
+    updated: "2026-09-16"
+  },
+  {
     id: "trip-canvas",
     title: "Trip Canvas",
     chineseTitle: "旅行计划画布",

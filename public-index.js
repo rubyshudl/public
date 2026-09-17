@@ -24,6 +24,9 @@
     if (symbol === "route") {
       return `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 10c6 0 9 4 9 9 0 7-9 16-9 16S9 26 9 19c0-5 3-9 9-9Z"/><circle cx="18" cy="19" r="3"/><path d="M22 39c0 8 7 12 15 12s17-3 17-11c0-5-4-8-10-8h-8"/><path d="m40 27-5 5 5 5"/></svg>`;
     }
+    if (symbol === "growth") {
+      return `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 50h44"/><path d="M15 43 27 31l9 7 14-18"/><path d="M39 20h11v11"/><circle cx="15" cy="43" r="3"/><circle cx="27" cy="31" r="3"/><circle cx="36" cy="38" r="3"/></svg>`;
+    }
     return `<span aria-hidden="true">${escapeHtml(symbol || "◆")}</span>`;
   }
 
