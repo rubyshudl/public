@@ -8,8 +8,8 @@
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Global Growth Lab · 商业分析与海外GTM知识库</title>
-  <link rel="stylesheet" href="styles.css">
-  <script type="module" src="app.js"></script>
+  <link rel="stylesheet" href="styles.css?v=textbook-1">
+  <script type="module" src="app.js?v=textbook-1"></script>
 </head>
 <body>
   <a class="skip-link" href="#content">跳到主要内容</a>
@@ -25,6 +25,7 @@
         <a href="#home" data-route="home"><span aria-hidden="true">⌂</span>学习首页</a>
         <a href="#learn" data-route="learn"><span aria-hidden="true">▤</span>知识轨道</a>
         <a href="#practice" data-route="practice"><span aria-hidden="true">◇</span>实战题库</a>
+        <a href="#sources" data-route="sources"><span aria-hidden="true">↗</span>来源与学习方法</a>
         <a href="#review" data-route="review"><span aria-hidden="true">↺</span>待复习</a>
         <a href="#favorites" data-route="favorites"><span aria-hidden="true">☆</span>收藏夹</a>
       </nav>
@@ -55,12 +56,12 @@
         <div class="topbar-actions">
           <span id="saveStatus" class="save-status" hidden></span>
           <button id="randomButton" class="button secondary" type="button"><span aria-hidden="true">⤨</span>随机抽题</button>
-          <button id="profileButton" class="button primary" type="button"><span class="lock-dot" aria-hidden="true"></span><span id="profileButtonText">个人档案</span></button>
+          <button id="profileButton" class="button primary" type="button" aria-label="创建、解锁或管理个人档案"><span class="lock-dot" aria-hidden="true"></span><span id="profileButtonText">个人档案</span></button>
         </div>
       </header>
 
       <main id="content" tabindex="-1"></main>
-      <footer><span>Global Growth Lab · 公开学习框架</span><span>个人数据不上传本站 · 非认证课程或专业意见</span></footer>
+      <footer><span>Global Growth Lab · 教材第一批 · 2026-09-17</span><span>全部原创模拟题 · 个人数据不上传本站</span></footer>
     </div>
   </div>
 
@@ -76,13 +77,14 @@
         <label class="field"><span>密码</span><input id="profilePassword" type="password" minlength="6" maxlength="128" autocomplete="current-password" required placeholder="至少6位"></label>
         <p id="profileError" class="form-error" role="alert" hidden></p>
         <button id="profileSubmit" class="button primary wide" type="submit">创建并解锁</button>
+        <button id="importProfileAuth" class="button secondary wide" type="button">已有备份？导入加密档案</button>
         <p class="security-note">密码不会上传或写入代码。本站没有找回密码功能，请导出加密备份并妥善保管。</p>
       </div>
       <div id="profileManage" hidden>
         <span class="modal-icon unlocked" aria-hidden="true">✓</span>
         <p class="overline">PERSONAL ARCHIVE</p>
         <h2 id="manageTitle">个人档案已解锁</h2>
-        <p class="modal-copy">收藏、完成状态、待复习题和草稿会自动加密保存到当前浏览器。</p>
+        <p class="modal-copy">收藏与完成标记自动加密保存；答题草稿需要点击“保存到加密档案”。</p>
         <div id="profileStats" class="profile-stats"></div>
         <div class="manage-actions">
           <button id="exportProfile" class="button secondary" type="button">导出加密备份</button>

@@ -1,3 +1,8 @@
+import { lesson as modelLesson, questions as modelQuestions } from './content/business-model.js';
+import { lesson as entryLesson, questions as entryQuestions } from './content/market-entry.js';
+import { lesson as economicsLesson, questions as economicsQuestions } from './content/commercial-economics.js';
+export { SOURCES, RELEASE } from './content/shared.js';
+
 export const TRACKS = [
   {
     id: 'analysis',
@@ -28,7 +33,7 @@ export const TRACKS = [
   },
 ];
 
-export const LESSONS = [
+const BASE_LESSONS = [
   {
     id: 'problem-framing', trackId: 'analysis', order: 1, duration: 35, level: '基础',
     title: '问题定义与假设树',
@@ -161,10 +166,10 @@ export const LESSONS = [
 export const QUESTION_TYPES = {
   interview: '面试题',
   written: '笔试题',
-  scenario: '真实商业场景',
+  scenario: '模拟商业场景',
 };
 
-export const QUESTIONS = [
+const BASE_QUESTIONS = [
   {
     id: 'q-growth-drop', trackId: 'analysis', type: 'interview', difficulty: '基础', duration: 10,
     title: '新市场增长突然下降，如何分析？',
@@ -213,11 +218,11 @@ export const QUESTIONS = [
   {
     id: 'q-launch-miss', trackId: 'gtm', type: 'scenario', difficulty: '进阶', duration: 30,
     title: '上线有流量但零转化，怎么救？',
-    context: '新市场发布活动获得大量落地页访问，但核心套餐零销售；剩余预算还有40%。',
-    prompt: '请判断问题、安排紧急动作，并说明如何向客户或管理层沟通。',
-    requirements: ['区分曝光、点击和购买', '检查产品价值与价格', '说明预算调整权限'],
-    framework: ['确认追踪和购买链路正常', '按产品、价格、日期、客群和渠道拆分', '对比替代方案和总价值', '访谈放弃用户或检查行为证据', '提出价格、产品、渠道或落地页调整', '保留小流量验证并设置预算切换阈值', '如实汇报原目标未达成和新假设'],
-    pitfalls: ['继续加曝光', '隐藏零销售', '把调整后的整体增长归因于原套餐'],
+    context: '独立虚构的团队排班软件在新市场获得试用注册，但没有团队完成首次排班；尚未验证原因。',
+    prompt: '请判断试用到关键任务之间的阻碍，设计诊断与小规模验证。',
+    requirements: ['区分注册、激活和付费', '检查数据导入与协作流程', '说明实验与风险边界'],
+    framework: ['确认关键事件追踪正常', '按注册来源、团队规模和设备拆分', '检查导入与邀请流程', '访谈未完成任务的使用者', '明确替代方案和目标价值', '选择一个阻碍做受控验证', '如实报告未验证的原因'],
+    pitfalls: ['只增加注册流量', '把注册当采用', '没有对照就声称修复造成增长'],
   },
   {
     id: 'q-partner-model', trackId: 'globalization', type: 'interview', difficulty: '基础', duration: 12,
@@ -246,4 +251,19 @@ export const QUESTIONS = [
     framework: ['向客户说明缺失材料、原因、截止时间和潜在影响', '确认企业结构、受益所有人和文件有效性', '建立客户、CS、合规、产品责任表和升级路径', '评估是否有合规允许的分阶段能力或备用收款安排', '每日同步风险，但不替合规承诺结果', '上线后补对账、拒付和风控监控'],
     pitfalls: ['承诺一定按时通过', '为了大促跳过材料', '只转发合规邮件，不管理客户行动'],
   },
+];
+
+export const FEATURED_LESSONS = [modelLesson, entryLesson, economicsLesson];
+const expandedIds = new Set(FEATURED_LESSONS.map(item => item.id));
+export const LESSONS = [
+  ...BASE_LESSONS.filter(item => !expandedIds.has(item.id)).map(item => ({
+    ...item, depth: 'outline',
+    order: item.id === 'pipeline-commercial' ? 8 : item.id === 'payments-compliance' ? 11 : item.order,
+  })), ...FEATURED_LESSONS,
+].sort((a, b) => TRACKS.findIndex(t => t.id === a.trackId) - TRACKS.findIndex(t => t.id === b.trackId) || a.order - b.order);
+const expandedQuestions = [...modelQuestions, ...entryQuestions, ...economicsQuestions];
+const expandedQuestionIds = new Set(expandedQuestions.map(item => item.id));
+export const QUESTIONS = [
+  ...BASE_QUESTIONS.filter(item => !expandedQuestionIds.has(item.id)).map(item => ({ ...item, depth: 'outline', sourceKind: 'mock' })),
+  ...expandedQuestions,
 ];
