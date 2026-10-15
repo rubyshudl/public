@@ -9,3 +9,4 @@ Public information and shareable materials.
 - Global Growth Lab：<https://rubyshudl.github.io/public/global-growth-lab/>
 	- 教材第一批：3章完整正文、15道原创详解题、数据下载、中英练习及知识点收藏；其他内容标为旧版提纲。
 - Trip Canvas：<https://rubyshudl.github.io/public/trip-canvas/>
+- BonVoyage Next：<https://rubyshudl.github.io/public/bonvoyage-next/>
